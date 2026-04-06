@@ -1,0 +1,12 @@
+{
+  "name": "polecanko",
+  "version": "0.0.0",
+  "description": "Yet another map-centric application for the best food locations recommendations around you",
+  "license": "ISC",
+  "author": "Adrian Niechciał",
+  "type": "commonjs",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  }
+}
