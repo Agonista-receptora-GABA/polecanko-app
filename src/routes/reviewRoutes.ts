@@ -1,4 +1,11 @@
 import { Router } from "express";
+import { z } from "zod";
+import { validateBody } from "../middleware/validation.ts";
+
+const createReviewSchema = z.object({
+  message: z.string().min(5),
+  rating: z.number().min(1).max(5),
+});
 
 const router = Router();
 
@@ -10,7 +17,7 @@ router.get("/:id", (req, res) => {
   res.json({ message: `got one review: ${req.params.id}` });
 });
 
-router.post("/", (req, res) => {
+router.post("/", validateBody(createReviewSchema), (req, res) => {
   res.status(201).json({ message: "created review" });
 });
 
