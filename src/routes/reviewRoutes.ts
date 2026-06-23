@@ -1,10 +1,14 @@
 import { Router } from "express";
 import { z } from "zod";
-import { validateBody } from "../middleware/validation.ts";
+import { validateBody, validateParams } from "../middleware/validation.ts";
 
 const createReviewSchema = z.object({
   message: z.string().min(5),
   rating: z.number().min(1).max(5),
+});
+
+const upvoteReviewSchema = z.object({
+  id: z.string().min(1).max(10),
 });
 
 const router = Router();
@@ -25,7 +29,7 @@ router.delete("/:id", (req, res) => {
   res.json({ message: `deleted review: ${req.params.id}` });
 });
 
-router.post("/:id/upvote", (req, res) => {
+router.post("/:id/upvote", validateParams(upvoteReviewSchema), (req, res) => {
   res.status(201).json({ message: `upvoted review: ${req.params.id}` });
 });
 
