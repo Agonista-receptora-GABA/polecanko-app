@@ -258,6 +258,8 @@ export const placeTagsRelations = relations(placeTags, ({ one }) => ({
   }),
 }));
 
+export type NewUser = typeof users.$inferInsert;
+
 export type User = typeof users.$inferSelect;
 export type Place = typeof places.$inferSelect;
 export type PlaceReview = typeof placeReviews.$inferSelect;
