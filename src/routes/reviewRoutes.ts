@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { z } from "zod";
 import { validateBody, validateParams } from "../middleware/validation.ts";
+import { authenticateToken } from "../middleware/auth.ts";
 
 const createReviewSchema = z.object({
   message: z.string().min(5),
@@ -12,6 +13,8 @@ const upvoteReviewSchema = z.object({
 });
 
 const router = Router();
+
+router.use(authenticateToken);
 
 router.get("/", (req, res) => {
   res.json({ message: "reviews" });
