@@ -1,12 +1,9 @@
 import { Router } from "express";
 import { z } from "zod";
+import { insertReviewSchema } from "../db/schema.ts";
 import { validateBody, validateParams } from "../middleware/validation.ts";
 import { authenticateToken } from "../middleware/auth.ts";
-
-const createReviewSchema = z.object({
-  message: z.string().min(5),
-  rating: z.number().min(1).max(5),
-});
+import { createReview } from "../controllers/reviewController.ts";
 
 const upvoteReviewSchema = z.object({
   id: z.string().min(1).max(10),
@@ -24,9 +21,7 @@ router.get("/:id", (req, res) => {
   res.json({ message: `got one review: ${req.params.id}` });
 });
 
-router.post("/", validateBody(createReviewSchema), (req, res) => {
-  res.status(201).json({ message: "created review" });
-});
+router.post("/", validateBody(insertReviewSchema), createReview);
 
 router.delete("/:id", (req, res) => {
   res.json({ message: `deleted review: ${req.params.id}` });
