@@ -100,7 +100,7 @@ export async function getUserReviewsWithVisits(
     );
 
     res.status(200).json({
-      reviewsWithVisit,
+      reviews: reviewsWithVisit,
     });
   } catch (e) {
     console.error("Error getting user's reviews", e);
