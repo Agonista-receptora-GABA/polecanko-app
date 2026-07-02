@@ -269,6 +269,12 @@ export type Tag = typeof tags.$inferSelect;
 export type PlaceTag = typeof placeTags.$inferSelect;
 export type SavedPlace = typeof savedPlaces.$inferSelect;
 
+export type ReviewWithVisitAndPlace = Review & {
+  visit?: Visit & {
+    place?: Place;
+  };
+};
+
 export const insertUserSchema = createInsertSchema(users);
 export const insertPlaceSchema = createInsertSchema(places);
 export const insertPlaceReviewSchema = createInsertSchema(placeReviews);
