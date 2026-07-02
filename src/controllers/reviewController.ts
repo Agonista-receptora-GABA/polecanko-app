@@ -9,6 +9,12 @@ import {
   type Visit,
 } from "../db/schema.ts";
 import { eq, and, desc, inArray } from "drizzle-orm";
+import {
+  formatBoolean,
+  formatDate,
+  formatString,
+  type CustomDate,
+} from "../utils/response.ts";
 
 export type ReviewResponse = {
   title: Review["title"];
@@ -16,24 +22,10 @@ export type ReviewResponse = {
   status: Review["status"];
   rating: Review["rating"];
   cost: Visit["cost"] | null;
-  visitDate: Visit["visitDate"] | null;
+  visitDate: CustomDate | null;
   confirmed: boolean | null;
   placeName: Place["name"] | null;
 };
-
-function getConfirmed(
-  value: Visit["confirmedAt"] | undefined,
-): ReviewResponse["confirmed"] {
-  if (value === undefined) {
-    return null;
-  }
-
-  if (value === null) {
-    return false;
-  }
-
-  return true;
-}
 
 export async function createReview(req: AuthenticatedRequest, res: Response) {
   try {
@@ -92,10 +84,10 @@ export async function getUserReviewsWithVisits(
         body: review.body,
         status: review.status,
         rating: review.rating,
-        cost: review?.visit?.cost ?? null,
-        visitDate: review?.visit?.visitDate ?? null,
-        confirmed: getConfirmed(review?.visit?.confirmedAt),
-        placeName: review?.visit?.place?.name ?? null,
+        cost: formatString(review?.visit?.cost),
+        visitDate: formatDate(review?.visit?.visitDate),
+        confirmed: formatBoolean(review?.visit?.confirmedAt),
+        placeName: formatString(review?.visit?.place?.name),
       }),
     );
 
