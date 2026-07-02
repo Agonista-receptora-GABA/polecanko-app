@@ -99,9 +99,7 @@ export async function getUserReviewsWithVisits(
       }),
     );
 
-    res.status(200).json({
-      reviews: reviewsWithVisit,
-    });
+    res.status(200).json(reviewsWithVisit);
   } catch (e) {
     console.error("Error getting user's reviews", e);
     res.status(500).json({ error: "Failed to fetch reviews" });
