@@ -104,6 +104,6 @@ export async function getUserReviewsWithVisits(
     });
   } catch (e) {
     console.error("Error getting user's reviews", e);
-    res.status(500).json({ error: "Failed to get reviews with visits" });
+    res.status(500).json({ error: "Failed to fetch reviews" });
   }
 }
