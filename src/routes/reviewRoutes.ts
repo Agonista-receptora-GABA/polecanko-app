@@ -6,6 +6,7 @@ import { authenticateToken } from "../middleware/auth.ts";
 import {
   createReview,
   getUserReviewsWithVisits,
+  updateReview,
 } from "../controllers/reviewController.ts";
 
 const upvoteReviewSchema = z.object({
@@ -27,6 +28,8 @@ router.post("/", validateBody(insertReviewSchema), createReview);
 router.delete("/:id", (req, res) => {
   res.json({ message: `deleted review: ${req.params.id}` });
 });
+
+router.patch("/:id", updateReview);
 
 router.post("/:id/upvote", validateParams(upvoteReviewSchema), (req, res) => {
   res.status(201).json({ message: `upvoted review: ${req.params.id}` });

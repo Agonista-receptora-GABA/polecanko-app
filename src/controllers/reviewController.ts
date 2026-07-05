@@ -31,13 +31,17 @@ export async function createReview(req: AuthenticatedRequest, res: Response) {
   try {
     const { title, body, status, rating, visitId } = req.body;
 
+    if (req.user!.id !== visitId) {
+      console.warn(
+        `Violation: User of ID ${req.user!.id} wanted to add review to a visit which isn't their own. Visit ID: ${visitId}`,
+      );
+      return res.status(401).end();
+    }
+
     const result = await db.transaction(async function handleTransaction(tx) {
       const [newReview] = await tx
         .insert(reviews)
         .values({
-          // TODO: Rethink what to do with the userId: because it should be the
-          //  same as the one assigned to the visit. Remove from that?
-          //  Remove from the visit? Keep in both, but validate?
           userId: req.user!.id,
           visitId,
           title,
@@ -95,5 +99,37 @@ export async function getUserReviewsWithVisits(
   } catch (e) {
     console.error("Error getting user's reviews", e);
     res.status(500).json({ error: "Failed to fetch reviews" });
+  }
+}
+
+export async function updateReview(req: AuthenticatedRequest, res: Response) {
+  try {
+    const id = req.params.id;
+    const { ...updates } = req.body;
+
+    const result = await db.transaction(async (tx) => {
+      const [updatedReview] = await tx
+        .update(reviews)
+        .set({ ...updates, updatedAt: new Date() })
+        .where(and(eq(reviews.id, id), eq(reviews.userId, req.user!.id)))
+        .returning();
+
+      if (!updatedReview) {
+        console.error(
+          `Couldn't update review of ID ${id} by user of ID ${req.user!.id}`,
+        );
+        return res.status(401).end();
+      }
+
+      return updatedReview;
+    });
+
+    res.json({
+      message: "Review was updated",
+      review: result,
+    });
+  } catch (e) {
+    console.error("Update review error", e);
+    res.status(500).json({ error: "Failed to update review" });
   }
 }
