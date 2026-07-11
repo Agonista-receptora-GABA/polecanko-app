@@ -7,6 +7,7 @@ import authRoutes from "./routes/authRoutes.ts";
 import userRoutes from "./routes/userRoutes.ts";
 import reviewRoutes from "./routes/reviewRoutes.ts";
 import env, { isTest } from "../env.ts";
+import { errorHandler } from "./middleware/errorHandler.ts";
 
 const allowedOrigins = env.ALLOWED_ORIGINS.split(",")
   .map((s) => s.trim())
@@ -38,6 +39,8 @@ app.get("/health", (req, res) => {
 app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/reviews", reviewRoutes);
+
+app.use(errorHandler);
 
 export { app };
 export default app;
