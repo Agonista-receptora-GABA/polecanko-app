@@ -70,20 +70,18 @@ export async function login(req: Request, res: Response) {
       username: user.username,
     });
 
-    return res
-      .json({
-        message: "Login success",
-        user: {
-          id: user.id,
-          email: user.email,
-          username: user.username,
-          firstName: user.firstName,
-          lastName: user.lastName,
-          createdAt: user.createdAt,
-        },
-        token,
-      })
-      .status(201);
+    return res.status(201).json({
+      message: "Login success",
+      user: {
+        id: user.id,
+        email: user.email,
+        username: user.username,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        createdAt: user.createdAt,
+      },
+      token,
+    });
   } catch (e) {
     console.error("Login error", e);
     res.status(500).json({ error: "Failed to login" });

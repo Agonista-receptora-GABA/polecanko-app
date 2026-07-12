@@ -30,4 +30,25 @@ describe("Authentication Endpoints", () => {
       expect(response.body.user).not.toHaveProperty("password");
     });
   });
+
+  describe("POST /api/auth/login", () => {
+    it("should log in with valid credentials", async () => {
+      const testUser = await createTestUser();
+
+      const credentials = {
+        email: testUser.user.email,
+        password: testUser.rawPassword,
+      };
+
+      const response = await request(app)
+        .post("/api/auth/login")
+        .send(credentials)
+        .expect(201);
+
+      expect(response.body).toHaveProperty("message");
+      expect(response.body).toHaveProperty("user");
+      expect(response.body).toHaveProperty("token");
+      expect(response.body.user).not.toHaveProperty("password");
+    });
+  });
 });
