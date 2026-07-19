@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors";
 import morgan from "morgan";
 import helmet from "helmet";
+import cookieParser from "cookie-parser";
 
 import authRoutes from "./routes/authRoutes.ts";
 import userRoutes from "./routes/userRoutes.ts";
@@ -15,6 +16,7 @@ const allowedOrigins = env.ALLOWED_ORIGINS.split(",")
 
 const app = express();
 app.use(helmet());
+app.use(cookieParser());
 app.use(
   cors({
     origin: (origin, cb) => {

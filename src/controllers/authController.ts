@@ -4,6 +4,14 @@ import { users, type NewUser } from "../db/schema.ts";
 import { generateToken } from "../utils/jwt.ts";
 import { comparePasswords, hashPassword } from "../utils/password.ts";
 import { eq } from "drizzle-orm";
+import { isProd } from "../../env.ts";
+
+const COOKIE_OPTIONS = {
+  httpOnly: true,
+  secure: isProd(),
+  sameSite: "lax" as const,
+  maxAge: 1000 * 60 * 60 * 24 * 7,
+};
 
 export async function register(req: Request<{}, {}, NewUser>, res: Response) {
   try {
@@ -30,10 +38,11 @@ export async function register(req: Request<{}, {}, NewUser>, res: Response) {
       username: user.username,
     });
 
+    res.cookie("token", token, COOKIE_OPTIONS);
+
     return res.status(201).json({
       message: "User created",
       user,
-      token,
     });
   } catch (e) {
     console.error("Registration error", e);
@@ -70,7 +79,9 @@ export async function login(req: Request, res: Response) {
       username: user.username,
     });
 
-    return res.status(201).json({
+    res.cookie("token", token, COOKIE_OPTIONS);
+
+    return res.status(200).json({
       message: "Login success",
       user: {
         id: user.id,
@@ -80,7 +91,6 @@ export async function login(req: Request, res: Response) {
         lastName: user.lastName,
         createdAt: user.createdAt,
       },
-      token,
     });
   } catch (e) {
     console.error("Login error", e);
