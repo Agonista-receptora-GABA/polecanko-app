@@ -5,6 +5,7 @@ import { generateToken } from "../utils/jwt.ts";
 import { comparePasswords, hashPassword } from "../utils/password.ts";
 import { eq } from "drizzle-orm";
 import { isProd } from "../../env.ts";
+import type { AuthenticatedRequest } from "../middleware/auth.ts";
 
 const COOKIE_OPTIONS = {
   httpOnly: true,
@@ -96,4 +97,24 @@ export async function login(req: Request, res: Response) {
     console.error("Login error", e);
     res.status(500).json({ error: "Failed to login" });
   }
+}
+
+export async function me(req: AuthenticatedRequest, res: Response) {
+  const user = await db.query.users.findFirst({
+    where: eq(users.id, req.user!.id),
+    columns: {
+      id: true,
+      email: true,
+      username: true,
+      firstName: true,
+      lastName: true,
+      createdAt: true,
+    },
+  });
+
+  if (!user) {
+    return res.status(404).json({ error: "User not found" });
+  }
+
+  return res.status(200).json({ user });
 }
